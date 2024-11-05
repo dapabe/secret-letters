@@ -1,6 +1,6 @@
 "use client"
 import { useLetterStore } from '#/stores/letter.store'
-import { HomeIcon, PencilIcon } from '@heroicons/react/24/outline'
+import { IconHome, IconWritingSign } from '@tabler/icons-react'
 import Link from 'next/link'
 
 export const MobileBar = () => {
@@ -8,11 +8,11 @@ export const MobileBar = () => {
   return (
     <nav className='btm-nav md:hidden'> 
       <Link href='/' >
-        <HomeIcon/>
+        <IconHome/>
         <span className="btm-nav-label">Inicio</span>
       </Link>
       <button onClick={toggleModal}>
-        <PencilIcon/>
+        <IconWritingSign/>
         <span className="btm-nav-label">Redactar</span>
       </button>
     </nav>

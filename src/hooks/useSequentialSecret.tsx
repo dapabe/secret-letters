@@ -22,13 +22,25 @@ export function useSequentialSecret(secret: string, content: string) {
         setChunks(x=> [...x,char])
         continue
       }
-  
+
       if(indexes.includes(i)){
-        setChunks(x=> [...x, <span key={i} className="text-red-500">{char}</span>]) 
+        setChunks(x=> [...x, <span key={i} aria-label={`Este caracter es secreto: ${char}`} className="highlighted">{char}</span>]) 
         exhaustIndex = indexes[i]!
       } else {
-        // if(i && typeof chunks[i - 1] === "string") setChunks(x=> [...x, x.concat(char).join("")])
-        setChunks(x=> [...x,char])
+        // setChunks(x=> [...x, char])
+        // TODO: Join chunks into sentences, splice chunks and join chars
+        setChunks(prev=> {          
+          const aux = new Map<number,ReactNode>()
+          for (let x = prev.length - 1; x >= prev.length; --x) { 
+            const chunk = prev[x]
+            if(typeof chunk !== "string") aux.set(i,chunk)
+            else {
+              
+            }
+          }
+          console.log(aux)
+          return [...prev, char]
+        })
       }
     }
 
