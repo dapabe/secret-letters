@@ -1,14 +1,13 @@
 import { DrizzleAdapter } from "@auth/drizzle-adapter";
 import { type DefaultSession, type NextAuthConfig } from "next-auth";
-import DiscordProvider from "next-auth/providers/discord";
 
 import { db } from "#/server/db";
-import {
-  accounts,
-  sessions,
-  users,
-  verificationTokens,
-} from "#/server/db/schema";
+
+import { UserModel } from "../db/models/user.model";
+
+import { AccountModel } from "../db/models/account.model";
+import { SessionModel } from "../db/models/session.model";
+import { VerificantionTokenModel } from "../db/models/verif-token.model";
 
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
@@ -38,7 +37,6 @@ declare module "next-auth" {
  */
 export const authConfig = {
   providers: [
-    DiscordProvider,
     /**
      * ...add more providers here.
      *
@@ -50,10 +48,10 @@ export const authConfig = {
      */
   ],
   adapter: DrizzleAdapter(db, {
-    usersTable: users,
-    accountsTable: accounts,
-    sessionsTable: sessions,
-    verificationTokensTable: verificationTokens,
+    usersTable: UserModel,
+    accountsTable: AccountModel,
+    sessionsTable: SessionModel,
+    verificationTokensTable: VerificantionTokenModel,
   }),
   callbacks: {
     session: ({ session, user }) => ({
