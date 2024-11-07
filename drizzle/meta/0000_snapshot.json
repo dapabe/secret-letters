@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "54511a5e-d1db-4039-8eeb-017a4ad4f742",
+  "id": "16a2c257-eb4a-4e45-b1ec-aaa4b12fd777",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "account": {
@@ -130,29 +130,15 @@
           "notNull": true,
           "autoincrement": false
         },
-        "title": {
-          "name": "title",
-          "type": "text(40)",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "secret_paragraph": {
-          "name": "secret_paragraph",
+        "content": {
+          "name": "content",
           "type": "text(255)",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
         },
-        "letter_content": {
-          "name": "letter_content",
-          "type": "text(255)",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "OwnedBy": {
-          "name": "OwnedBy",
+        "userId": {
+          "name": "userId",
           "type": "text(255)",
           "primaryKey": false,
           "notNull": false,
@@ -161,12 +147,56 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "letter_OwnedBy_user_id_fk": {
-          "name": "letter_OwnedBy_user_id_fk",
+        "letter_userId_user_id_fk": {
+          "name": "letter_userId_user_id_fk",
           "tableFrom": "letter",
           "tableTo": "user",
           "columnsFrom": [
-            "OwnedBy"
+            "userId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "secret": {
+      "name": "secret",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text(255)",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "text": {
+          "name": "text",
+          "type": "text(255)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "letter_id": {
+          "name": "letter_id",
+          "type": "text(255)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "secret_letter_id_letter_id_fk": {
+          "name": "secret_letter_id_letter_id_fk",
+          "tableFrom": "secret",
+          "tableTo": "letter",
+          "columnsFrom": [
+            "letter_id"
           ],
           "columnsTo": [
             "id"

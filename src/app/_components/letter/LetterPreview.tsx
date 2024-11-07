@@ -2,17 +2,18 @@
 
 import { useImplicitToggle } from "#/hooks/useImplicitToggle";
 import { useSequentialSecret } from "#/hooks/useSequentialSecret";
+import { type ILetterCreate } from "#/server/db/models";
 import { IconEye, IconEyeClosed } from "@tabler/icons-react";
 import { twJoin } from "tailwind-merge";
 import { LetterBackground } from "./LetterBackground";
 
 type Props = {
-  secrets: string[];
+  secrets: ILetterCreate["secrets"];
   content: string;
 };
 
 export function LetterPreview({ secrets, content }: Props) {
-  const chunks = useSequentialSecret(secrets?.[0] ?? "", content);
+  const chunks = useSequentialSecret(secrets[0]?.text ?? "", content);
   const [isRevealed, toggleReveal] = useImplicitToggle();
 
   return (

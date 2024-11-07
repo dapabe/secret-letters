@@ -16,11 +16,16 @@ CREATE TABLE `account` (
 --> statement-breakpoint
 CREATE TABLE `letter` (
 	`id` text(255) PRIMARY KEY NOT NULL,
-	`title` text(40) NOT NULL,
-	`secret_paragraph` text(255) NOT NULL,
-	`letter_content` text(255) NOT NULL,
-	`OwnedBy` text(255),
-	FOREIGN KEY (`OwnedBy`) REFERENCES `user`(`id`) ON UPDATE no action ON DELETE no action
+	`content` text(255) NOT NULL,
+	`userId` text(255),
+	FOREIGN KEY (`userId`) REFERENCES `user`(`id`) ON UPDATE no action ON DELETE no action
+);
+--> statement-breakpoint
+CREATE TABLE `secret` (
+	`id` text(255) PRIMARY KEY NOT NULL,
+	`text` text(255) NOT NULL,
+	`letter_id` text(255) NOT NULL,
+	FOREIGN KEY (`letter_id`) REFERENCES `letter`(`id`) ON UPDATE no action ON DELETE no action
 );
 --> statement-breakpoint
 CREATE TABLE `session` (

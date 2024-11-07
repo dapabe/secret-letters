@@ -1,28 +1,46 @@
-
-import {
-  createTRPCRouter,
-  publicProcedure,
-} from "#/server/api/trpc";
+import { createTRPCRouter, publicProcedure } from "#/server/api/trpc";
 import {
   LetterCreateSchema,
   LetterModel,
+  SecretModel,
 } from "#/server/db/models/index";
+import { eq } from "drizzle-orm";
 
 export const LetterRouter = createTRPCRouter({
   createLetter: publicProcedure
     .input(LetterCreateSchema)
     .mutation(async ({ ctx, input }) => {
-      await ctx.db.insert(LetterModel).values({
-        title: input.title,
-        secretParagraph: input.secretParagraph,
-        letterContent: input.letterContent,
-        OwnedBy: ctx.session?.user.id,
+      await ctx.db.transaction(async (t) => {
+        const letter = await t
+          .insert(LetterModel)
+          .values({
+            content: input.content,
+            authorId: ctx.session?.user.id,
+          })
+          .returning({ id: LetterModel.id });
+        if (input.secrets.length) {
+          const letterId = letter[0]!.id;
+          await t
+            .insert(SecretModel)
+            .values(input.secrets.map((s) => ({ letterId, text: s.text })));
+        }
       });
     }),
 
   getLatestLetters: publicProcedure.query(async ({ ctx }) => {
-    const letters = await ctx.db.select().from(LetterModel).limit(10);
+    const letters = await ctx.db
+      .select()
+      .from(LetterModel)
+      .leftJoin(SecretModel, eq(LetterModel.id, SecretModel.letterId))
+      .limit(10);
 
-    return letters;
+    console.log({ letters });
+    // const parsed: ILetterRead = letters.map(({letter,secret}) => ({
+    //   id: l.id,
+    //   content: l.content,
+    //   secrets: l.secrets.map((s) => ({ id: s.id, text: s.text })),
+    // }));
+
+    return [];
   }),
 });

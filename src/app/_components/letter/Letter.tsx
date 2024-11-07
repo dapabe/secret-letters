@@ -5,14 +5,14 @@ import { IconEye, IconEyeClosed } from "@tabler/icons-react";
 import { twJoin } from "tailwind-merge";
 import { LetterBackground } from "./LetterBackground";
 
-export function Letter({ secretParagraph, letterContent }: ILetterRead) {
-  const chunks = useSequentialSecret(secretParagraph, letterContent);
+export function Letter({ secrets, content }: ILetterRead) {
+  const chunks = useSequentialSecret(secrets?.[0]?.text ?? "", content);
   const [isRevealed, toggleReveal] = useImplicitToggle();
 
   return (
     <LetterBackground>
       <main className="bg-base-100 p-4 pt-6">
-        <p
+        <section
           className={twJoin(
             "transition-colors",
             isRevealed
@@ -21,7 +21,7 @@ export function Letter({ secretParagraph, letterContent }: ILetterRead) {
           )}
         >
           {chunks}
-        </p>
+        </section>
         <button
           className="btn btn-ghost btn-sm"
           onClick={toggleReveal}
