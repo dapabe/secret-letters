@@ -10,11 +10,12 @@ import { LetterBackground } from "./LetterBackground";
 type Props = {
   secrets: ILetterCreate["secrets"];
   content: string;
+  isEyeOpen?: boolean;
 };
 
-export function LetterPreview({ secrets, content }: Props) {
+export function LetterPreview({ secrets, content, isEyeOpen }: Props) {
   const chunks = useSequentialSecret(secrets[0]?.text ?? "", content);
-  const [isRevealed, toggleReveal] = useImplicitToggle();
+  const [isRevealed, toggleReveal] = useImplicitToggle(!!isEyeOpen);
 
   return (
     <LetterBackground>
@@ -35,6 +36,7 @@ export function LetterPreview({ secrets, content }: Props) {
           aria-label={isRevealed ? "Ocultar" : "Mostrar"}
         >
           {isRevealed ? <IconEye /> : <IconEyeClosed />}
+          Vista previa
         </button>
       </main>
     </LetterBackground>

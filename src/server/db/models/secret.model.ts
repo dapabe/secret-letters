@@ -26,7 +26,7 @@ export const SecretRelations = relations(SecretModel, ({ one }) => ({
 
 export const SecretReadSchema = createSelectSchema(SecretModel);
 export const SecretCreateSchema = createSelectSchema(SecretModel, {
-  text: (sch) => sch.text.min(2).max(255),
+  text: (sch) => sch.text.trim().min(2).max(255),
 });
 
 export type ISecretRead = z.infer<typeof SecretReadSchema>;

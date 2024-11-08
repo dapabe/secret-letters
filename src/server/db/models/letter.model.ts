@@ -28,7 +28,7 @@ export const LetterReadSchema = createSelectSchema(LetterModel).extend({
   secrets: SecretCreateSchema.pick({ text: true, id: true }).array().optional(),
 });
 export const LetterCreateSchema = createInsertSchema(LetterModel, {
-  content: (sch) => sch.content.min(2).max(255),
+  content: (sch) => sch.content.trim().min(2).max(255),
   authorId: (sch) => sch.authorId.optional(),
 })
   .omit({ id: true })
