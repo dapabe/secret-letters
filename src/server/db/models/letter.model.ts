@@ -2,7 +2,7 @@ import { relations } from "drizzle-orm";
 import * as d from "drizzle-orm/sqlite-core";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import { type z } from "zod";
-import { SecretCreateSchema } from "./secret.model";
+import { SecretCreateSchema, SecretModel } from "./secret.model";
 import { UserModel } from "./user.model";
 
 export const LetterModel = d.sqliteTable("letter", {
@@ -17,7 +17,7 @@ export const LetterModel = d.sqliteTable("letter", {
 });
 
 export const LetterRelations = relations(LetterModel, ({ one, many }) => ({
-  Secrets: many(LetterModel),
+  Secrets: many(SecretModel),
   User: one(UserModel, {
     fields: [LetterModel.authorId],
     references: [UserModel.id],
@@ -25,7 +25,7 @@ export const LetterRelations = relations(LetterModel, ({ one, many }) => ({
 }));
 
 export const LetterReadSchema = createSelectSchema(LetterModel).extend({
-  secrets: SecretCreateSchema.pick({ text: true, id: true }).array().optional(),
+  Secrets: SecretCreateSchema.pick({ text: true, id: true }).array(),
 });
 export const LetterCreateSchema = createInsertSchema(LetterModel, {
   content: (sch) => sch.content.trim().min(2).max(255),

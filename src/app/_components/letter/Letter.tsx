@@ -1,34 +1,33 @@
 import { useImplicitToggle } from "#/hooks/useImplicitToggle";
-import { useSequentialSecret } from "#/hooks/useSequentialSecret";
 import { type ILetterRead } from "#/server/db/models";
-import { IconEye, IconEyeClosed } from "@tabler/icons-react";
-import { twJoin } from "tailwind-merge";
+import { useState } from "react";
 import { LetterBackground } from "./LetterBackground";
+import { LetterContentOutput } from "./LetterContentOutput";
+import { LetterFooter } from "./LetterFooter";
 
-export function Letter({ secrets, content }: ILetterRead) {
-  const chunks = useSequentialSecret(secrets?.[0]?.text ?? "", content);
+export function Letter({ Secrets, content }: ILetterRead) {
   const [isRevealed, toggleReveal] = useImplicitToggle();
+  const [currentSecret, setCurrentSecret] = useState(0);
 
   return (
     <LetterBackground>
-      <main className="bg-base-100 p-4 pt-6">
-        <section
-          className={twJoin(
-            "transition-colors",
-            isRevealed
-              ? "text-base-300 [&_.highlighted]:text-accent"
-              : undefined,
-          )}
-        >
-          {chunks}
+      <main className="bg-base-100 p-4 pt-6 font-mono">
+        <section className="text-sm">
+          <LetterContentOutput
+            content={content}
+            secret={Secrets[currentSecret]?.text ?? null}
+            isRevealed={isRevealed}
+          />
         </section>
-        <button
-          className="btn btn-ghost btn-sm"
-          onClick={toggleReveal}
-          aria-label={isRevealed ? "Ocultar" : "Mostrar"}
-        >
-          {isRevealed ? <IconEye /> : <IconEyeClosed />}
-        </button>
+        <div className="divider my-0"></div>
+        <LetterFooter
+          Secrets={Secrets}
+          currentSecret={currentSecret}
+          handlePrevSecret={() => setCurrentSecret((x) => x - 1)}
+          handleNextSecret={() => setCurrentSecret((x) => x + 1)}
+          isRevealed={isRevealed}
+          toggleReveal={toggleReveal}
+        />
       </main>
     </LetterBackground>
   );

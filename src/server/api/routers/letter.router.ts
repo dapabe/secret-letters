@@ -5,7 +5,6 @@ import {
   LetterModel,
   SecretModel,
 } from "#/server/db/models/index";
-import { eq } from "drizzle-orm";
 
 export const LetterRouter = createTRPCRouter({
   createLetter: publicProcedure
@@ -30,24 +29,17 @@ export const LetterRouter = createTRPCRouter({
 
   getLatestLetters: publicProcedure.query(
     async ({ ctx }): Promise<ILetterRead[]> => {
-      const letters = await ctx.db
-        .select()
-        .from(LetterModel)
-        .leftJoin(SecretModel, eq(LetterModel.id, SecretModel.letterId))
-        .limit(10);
+      const letters = await ctx.db.query.LetterModel.findMany({
+        with: {
+          Secrets: {
+            columns: {
+              letterId: false,
+            },
+          },
+        },
+      });
 
-      // letters.map<ILetterRead>((l) => {
-      //   l.
-      //   console.log(l);
-      // });
-      console.log({ letters });
-      // const parsed: ILetterRead = letters.map(({letter,secret}) => ({
-      //   id: l.id,
-      //   content: l.content,
-      //   secrets: l.secrets.map((s) => ({ id: s.id, text: s.text })),
-      // }));
-
-      return [];
+      return letters;
     },
   ),
 });

@@ -74,9 +74,8 @@ export function CreateLetter() {
     >
       <div className="mx-auto w-11/12 max-w-4xl pt-4">
         <LetterPreview
-          secrets={letter.secrets}
+          secrets={letter.secrets.map((s, i) => ({ ...s, id: i.toString() }))}
           content={letter.content}
-          isEyeOpen
         />
       </div>
       <div className="modal-box bottom-0 mx-auto w-11/12 max-w-4xl space-y-4">
@@ -174,7 +173,6 @@ function SecretPhraseTable({
             index: currentVal.index,
           }}
           onSubmit={(x) => {
-            console.log(x);
             if (x.index === -1) return storeSecret(x.text);
             updateSecret(x.index, x.text);
             setVal({ text: "", index: -1 });
