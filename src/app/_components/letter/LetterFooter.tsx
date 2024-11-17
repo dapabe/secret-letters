@@ -6,24 +6,39 @@ import {
   IconEye,
   IconEyeClosed,
 } from "@tabler/icons-react";
+import { twJoin } from "tailwind-merge";
 
-type Props = {
-  Secrets: ILetterRead["Secrets"];
+type Props =
+  | {
+      isPreview: boolean;
+      Secrets: ILetterRead["Secrets"];
 
-  isRevealed: boolean;
-  toggleReveal: () => void;
+      isRevealed: boolean;
+      hasBookmark?: boolean;
+      toggleReveal: () => void;
 
-  currentSecret: number;
-  handlePrevSecret: () => void;
-  handleNextSecret: () => void;
+      currentSecret: number;
+      handlePrevSecret: () => void;
+      handleNextSecret: () => void;
+    }
+  | {
+      isPreview?: false;
+      Secrets: ILetterRead["Secrets"];
 
-  isPreview?: boolean;
-};
+      isRevealed: boolean;
+      hasBookmark: boolean;
+      toggleReveal: () => void;
+
+      currentSecret: number;
+      handlePrevSecret: () => void;
+      handleNextSecret: () => void;
+    };
 
 export function LetterFooter({
   Secrets,
   currentSecret,
   isRevealed,
+  hasBookmark,
   toggleReveal,
   isPreview,
   handleNextSecret,
@@ -31,7 +46,7 @@ export function LetterFooter({
 }: Props) {
   if (isPreview)
     return (
-      <footer className="flex items-center">
+      <footer className="flex items-center justify-around">
         <button className="btn btn-outline btn-sm" onClick={toggleReveal}>
           {isRevealed ? (
             <>
@@ -55,14 +70,14 @@ export function LetterFooter({
     );
 
   return (
-    <footer className="flex items-center">
+    <footer className="flex items-center justify-between">
       {Secrets.length ? (
         <>
           <button
             className="btn btn-ghost btn-sm sm:tooltip sm:tooltip-left sm:tooltip-info"
             data-tip={isRevealed ? "Ocultar secreto" : "Mostrar secreto"}
-            onClick={toggleReveal}
             aria-label={isRevealed ? "Ocultar secreto" : "Mostrar secreto"}
+            onClick={toggleReveal}
           >
             {isRevealed ? <IconEye /> : <IconEyeClosed />}
           </button>
@@ -77,8 +92,14 @@ export function LetterFooter({
       ) : (
         <div className="flex-1"></div>
       )}
-      <button className="btn btn-link btn-sm">
-        <IconBookmark />
+      <button
+        className={
+          "btn btn-ghost btn-sm text-base-300 hover:btn-link sm:tooltip sm:tooltip-right sm:tooltip-info"
+        }
+        data-tip={hasBookmark ? "Quitar nota marcada" : "Guardar nota"}
+        aria-label={hasBookmark ? "Quitar nota marcada" : "Guardar nota"}
+      >
+        <IconBookmark className={twJoin(hasBookmark && "fill-primary")} />
       </button>
     </footer>
   );
@@ -98,13 +119,12 @@ function SecretNavigation({
   totalSecrets,
 }: CurrentSecretProps) {
   return (
-    <div className="flex-1 text-xs">
+    <div className="text-xs">
       <p className="text-center">Secretos</p>
       <div className="menu menu-horizontal mx-auto w-full items-center justify-center gap-x-1 p-0">
         <button
-          disabled={currentSecret <= 0}
-          className="btn btn-square btn-xs tooltip tooltip-left"
-          data-tip="Secreto anterior"
+          disabled={totalSecrets <= 1}
+          className="btn btn-square btn-xs"
           onClick={handlePrevSecret}
         >
           <IconChevronLeft />
@@ -114,9 +134,8 @@ function SecretNavigation({
           {totalSecrets === 0 ? 0 : currentSecret + 1}/{totalSecrets}
         </span>
         <button
-          disabled={currentSecret + 1 >= totalSecrets}
-          className="btn btn-square btn-xs tooltip tooltip-right"
-          data-tip="Siguiente secreto"
+          disabled={totalSecrets <= 1}
+          className="btn btn-square btn-xs"
           onClick={handleNextSecret}
         >
           <IconChevronRight />

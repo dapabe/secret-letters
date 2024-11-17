@@ -1,28 +1,34 @@
 "use client";
 
 import { useImplicitToggle } from "#/hooks/useImplicitToggle";
-import { type ILetterRead } from "#/server/db/models";
+import { type ILetterCreate } from "#/server/db/models";
 import { useState } from "react";
+import { useFormContext } from "react-hook-form";
 import { LetterBackground } from "./LetterBackground";
 import { LetterContentOutput } from "./LetterContentOutput";
 import { LetterFooter } from "./LetterFooter";
 
-type Props = {
-  secrets: ILetterRead["Secrets"];
-  content: string;
-};
-
-export function LetterPreview({ secrets, content }: Props) {
+export function LetterPreview() {
   const [isRevealed, toggleReveal] = useImplicitToggle(true);
   const [currentSecret, setCurrentSecret] = useState(0);
 
-  const handlePrevSecret = () => setCurrentSecret((x) => x - 1);
-  const handleNextSecret = () => setCurrentSecret((x) => x + 1);
+  const form = useFormContext<ILetterCreate>();
 
-  // useEffect(() => {
-  //   if (currentSecret === 0 && secrets.length > 0) handleNextSecret();
-  //   if (currentSecret >= secrets.length) handlePrevSecret();
-  // }, [currentSecret, secrets]);
+  const secrets = form
+    .watch("secrets")
+    .map((s, i) => ({ ...s, id: i.toString() }));
+  const content = form.watch("content");
+
+  const handlePrevSecret = () =>
+    setCurrentSecret((x) => {
+      if (x === 0) return secrets.length - 1;
+      return x - 1;
+    });
+  const handleNextSecret = () =>
+    setCurrentSecret((x) => {
+      if (x === secrets.length - 1) return 0;
+      return x + 1;
+    });
 
   return (
     <LetterBackground>

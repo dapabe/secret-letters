@@ -2,8 +2,8 @@ import { formatSecret } from "#/common/transformer";
 import { type ReactNode, useEffect, useMemo, useState } from "react";
 
 /**
- *  Takes secret phrases and format them into a sequential array of characters \n
- *  and JSX elements.
+ * Takes secret phrases and formats them into a sequential array of characters
+ * and JSX elements, concatenating regular characters between highlighted spans.
  */
 export function useSequentialSecret(secret: string, content: string) {
   const indexes = useMemo(
@@ -13,47 +13,40 @@ export function useSequentialSecret(secret: string, content: string) {
   const [chunks, setChunks] = useState<ReactNode[]>([]);
 
   useEffect(() => {
-    let exhaustIndex = 0;
-    const last = indexes.at(-1);
+    let currentString = "";
+    const newChunks: ReactNode[] = [];
 
-    for (let i = 0; i < content.length; ++i) {
+    // Process each character in the content
+    for (let i = 0; i < content.length; i++) {
       const char = content[i];
 
-      if (last === exhaustIndex) {
-        setChunks((x) => [...x, char]);
-        continue;
-      }
-
       if (indexes.includes(i)) {
-        setChunks((x) => [
-          ...x,
-          <span
-            key={i}
-            aria-label={`Este caracter es secreto: ${char}`}
-            className="highlighted"
-          >
+        // If we have accumulated characters, push them as a chunk
+        if (currentString) {
+          newChunks.push(currentString);
+          currentString = "";
+        }
+
+        // Add the highlighted span
+        newChunks.push(
+          <span key={i} tabIndex={0}>
             {char}
           </span>,
-        ]);
-        exhaustIndex = indexes[i]!;
+        );
       } else {
-        // setChunks(x=> [...x, char])
-        // TODO: Join chunks into sentences, splice chunks and join chars
-        setChunks((prev) => {
-          // const aux = new Map<number,ReactNode>()
-          // for (let x = prev.length - 1; x >= prev.length; --x) {
-          //   const chunk = prev[x]
-          //   if(typeof chunk !== "string") aux.set(i,chunk)
-          //   else {
-
-          //   }
-          // }
-          // console.log(aux)
-          return [...prev, char];
-        });
+        // Accumulate regular characters
+        currentString += char;
       }
     }
 
+    // Push any remaining characters
+    if (currentString) {
+      newChunks.push(currentString);
+    }
+
+    setChunks(newChunks);
+
+    // Cleanup function
     return () => {
       setChunks([]);
     };

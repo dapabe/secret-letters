@@ -1,5 +1,5 @@
 "use client";
-import { useLetterStore } from "#/stores/letter.store";
+import { useLetterStore } from "#/stores/letter-preview.store";
 import { IconWritingSign } from "@tabler/icons-react";
 
 export function SideBar() {

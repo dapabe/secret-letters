@@ -1,6 +1,5 @@
 import { useSequentialSecret } from "#/hooks/useSequentialSecret";
 import { type ILetterRead, type ISecretRead } from "#/server/db/models";
-import { twJoin } from "tailwind-merge";
 
 type Props = {
   content: ILetterRead["content"];
@@ -13,10 +12,9 @@ export function TransformSecretChunks({ content, secret, isRevealed }: Props) {
 
   return (
     <div
-      className={twJoin(
-        "transition-colors",
-        isRevealed ? "text-base-300 [&_.highlighted]:text-accent" : undefined,
-      )}
+      data-revealed={isRevealed + ""}
+      data-highlight={isRevealed && "default"}
+      className="transition-colors"
     >
       {chunks}
     </div>
