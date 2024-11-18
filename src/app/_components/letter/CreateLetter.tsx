@@ -1,12 +1,11 @@
 "use client";
-import { DeviceWidths } from "#/common/device-widths";
 import { useImplicitToggle } from "#/hooks/useImplicitToggle";
 import {
   LetterCreateSchema,
   SecretCreateSchema,
   type ILetterCreate,
 } from "#/server/db/models";
-import { useLetterStore } from "#/stores/letter-preview.store";
+import { useModalStore } from "#/stores/modal.store";
 import { api } from "#/trpc/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -18,7 +17,6 @@ import {
   IconTrash,
   IconX,
 } from "@tabler/icons-react";
-import { useMediaQuery } from "@uidotdev/usehooks";
 import { useEffect } from "react";
 import {
   FormProvider,
@@ -30,9 +28,9 @@ import { z } from "zod";
 import { Textarea } from "../forms/Textarea";
 import { Tabs } from "../ui/Tabs";
 import { LetterPreview } from "./LetterPreview";
+
 export function CreateLetter() {
-  const { isModalOpen, toggleModal } = useLetterStore();
-  const isMobile = useMediaQuery(DeviceWidths.small);
+  const { createLetterModal, toggleModal } = useModalStore();
 
   const utils = api.useUtils();
   const form = useForm<ILetterCreate>({
@@ -55,7 +53,7 @@ export function CreateLetter() {
     return () => {
       form.reset();
     };
-  }, [form, isModalOpen]);
+  }, [form, createLetterModal]);
 
   // const dialogRef = useRef<HTMLDialogElement>(null);
 
@@ -64,7 +62,7 @@ export function CreateLetter() {
       <dialog
         // ref={dialogRef}
         className="modal modal-bottom flex flex-col justify-between"
-        open={isModalOpen}
+        open={createLetterModal}
       >
         <div className="mx-auto w-11/12 max-w-4xl pt-4">
           <LetterPreview />
@@ -81,7 +79,10 @@ export function CreateLetter() {
               Crear mensaje secreto
             </button>
             <form method="dialog" className="size-fit">
-              <button className="btn btn-circle" onClick={toggleModal}>
+              <button
+                className="btn btn-circle"
+                onClick={() => toggleModal("createLetterModal")}
+              >
                 <IconX className="size-6" />
               </button>
             </form>
@@ -121,7 +122,7 @@ export function CreateLetter() {
           </div>
         </div>
         <button
-          onClick={toggleModal}
+          onClick={() => toggleModal("createLetterModal")}
           className="modal-backdrop absolute inset-0 bg-neutral/80"
         ></button>
       </dialog>
@@ -190,7 +191,6 @@ function SecretPhraseTable({ control }: { control: Control<ILetterCreate> }) {
                       toggleView();
                       secretForm.setValue("index", i);
                       secretForm.setValue("text", field.text);
-                      // update()
                     }}
                   >
                     <IconPencilQuestion />

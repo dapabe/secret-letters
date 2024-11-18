@@ -74,7 +74,7 @@ export function LetterFooter({
       </footer>
     );
 
-  const handleBookmark = () => {
+  const handleBookmark = async () => {
     if (!session.data) return router.push("/login");
     // api.letter.bookmarkLetter.mutate({
     //   letterId: currentLetter.id,
