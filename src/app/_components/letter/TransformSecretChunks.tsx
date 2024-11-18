@@ -12,7 +12,7 @@ export function TransformSecretChunks({ content, secret, isRevealed }: Props) {
 
   return (
     <div
-      data-revealed={isRevealed + ""}
+      data-revealed={`${isRevealed}`}
       data-highlight={isRevealed && "default"}
       className="transition-colors"
     >

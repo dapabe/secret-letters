@@ -12,11 +12,10 @@
     }
   }
 
-  [data-highlight="letter"] {
-    @apply text-inherit;
-
+  [data-highlight="line"] {
+    @apply text-neutral;
     span {
-      @apply italic;
+      @apply relative before:absolute before:inset-1/4 before:h-0.5 before:w-full before:-translate-x-1/4 before:bg-neutral after:absolute after:inset-x-full after:inset-y-2/4 after:h-0.5 after:w-full after:-translate-x-full after:bg-neutral;
     }
   }
 }

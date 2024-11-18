@@ -6,6 +6,8 @@ import {
   IconEye,
   IconEyeClosed,
 } from "@tabler/icons-react";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import { twJoin } from "tailwind-merge";
 
 type Props =
@@ -44,6 +46,9 @@ export function LetterFooter({
   handleNextSecret,
   handlePrevSecret,
 }: Props) {
+  const session = useSession();
+  const router = useRouter();
+
   if (isPreview)
     return (
       <footer className="flex items-center justify-around">
@@ -68,6 +73,14 @@ export function LetterFooter({
         />
       </footer>
     );
+
+  const handleBookmark = () => {
+    if (!session.data) return router.push("/login");
+    // api.letter.bookmarkLetter.mutate({
+    //   letterId: currentLetter.id,
+    //   bookmark: !currentLetter.bookmarked,
+    // });
+  };
 
   return (
     <footer className="flex items-center justify-between">
@@ -98,6 +111,7 @@ export function LetterFooter({
         }
         data-tip={hasBookmark ? "Quitar nota marcada" : "Guardar nota"}
         aria-label={hasBookmark ? "Quitar nota marcada" : "Guardar nota"}
+        onClick={handleBookmark}
       >
         <IconBookmark className={twJoin(hasBookmark && "fill-primary")} />
       </button>
